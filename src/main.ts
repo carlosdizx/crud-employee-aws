@@ -1,10 +1,10 @@
 import { NestFactory } from '@nestjs/core';
 import AppModule from './app.module';
 import * as dotenv from 'dotenv';
-import * as process from 'process';
 
 const bootstrap = async () => {
   const env = process.env.NODE_ENV;
+  console.log('Ambiente', env);
   switch (env) {
     case 'dev':
       dotenv.config({ path: '.env.dev' });
@@ -22,6 +22,7 @@ const bootstrap = async () => {
   const app = await NestFactory.create(AppModule);
   await app.listen(3000);
   console.log(`http://localhost:${3000}`);
+  console.log('==>', process.env.AWS_DYNAMO);
 };
 
 (async () => {
