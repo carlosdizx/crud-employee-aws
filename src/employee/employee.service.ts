@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { CreateEmployeeDto } from './dto/create-employee.dto';
-import { UpdateEmployeeDto } from './dto/update-employee.dto';
 import DynamodbAdapter from '../common/adapters/dynamodb.adapter';
 
 @Injectable()
