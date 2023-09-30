@@ -11,10 +11,11 @@ import { S3Service } from '../common/service/aws.s3.service';
 import { FileUpload } from '../common/interfaces/file-upload';
 import fileValidate from '../common/helpers/fileFilter.helper';
 
-@Controller('employee/file')
+@Controller('employee/file/upload')
 export class UploadController {
+  private readonly bucketName: string = 'employees';
   constructor(private readonly s3Service: S3Service) {}
-  @Post('upload')
+  @Post()
   @UseInterceptors(
     FileInterceptor('file', {
       fileFilter: fileValidate,
@@ -23,17 +24,15 @@ export class UploadController {
   async uploadFile(@UploadedFile() file: FileUpload) {
     if (!file) throw new BadRequestException('File not found in request');
     const [name, extension] = file.originalname.split('.');
-    const result = await this.s3Service.uploadFile({
-      bucketName: 'employees',
+    await this.s3Service.uploadFile({
+      bucketName: this.bucketName,
       key: `${name}.${extension}`,
       data: file.buffer,
     });
-
-    return { result };
   }
 
-  @Get('upload')
+  @Get()
   async listObjects() {
-    return this.s3Service.listObjects('employees');
+    return this.s3Service.listObjects(this.bucketName);
   }
 }
