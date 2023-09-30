@@ -40,3 +40,6 @@ lerna-debug.log*
 .env.qa
 .env.prod
 .env.local
+
+#Docker
+volume/
