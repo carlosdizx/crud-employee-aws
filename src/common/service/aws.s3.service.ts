@@ -1,5 +1,9 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
-import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
+import {
+  ListObjectsV2Command,
+  PutObjectCommand,
+  S3Client,
+} from '@aws-sdk/client-s3';
 import { ConfigService } from '@nestjs/config';
 import { S3ClientConfig } from '@aws-sdk/client-s3/dist-types/S3Client';
 import { uploadDto } from '../dto/s3.dto';
@@ -33,6 +37,22 @@ export class S3Service {
     } catch (error) {
       throw new InternalServerErrorException(
         `Error uploading file to bucket ${bucketName}: ${error.message}`,
+      );
+    }
+  };
+
+  public listObjects = async (bucketName: string): Promise<string[]> => {
+    try {
+      const command = new ListObjectsV2Command({
+        Bucket: bucketName,
+      });
+
+      const response = await this.s3Client.send(command);
+
+      return response.Contents?.map((object) => object.Key) || [];
+    } catch (error) {
+      throw new InternalServerErrorException(
+        `Error listing objects in bucket ${bucketName}: ${error.message}`,
       );
     }
   };
