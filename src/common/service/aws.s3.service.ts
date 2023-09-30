@@ -1,9 +1,5 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
-import {
-  ListBucketsCommand,
-  PutObjectCommand,
-  S3Client,
-} from '@aws-sdk/client-s3';
+import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { ConfigService } from '@nestjs/config';
 import { S3ClientConfig } from '@aws-sdk/client-s3/dist-types/S3Client';
 import { uploadDto } from '../dto/s3.dto';
