@@ -1,4 +1,5 @@
 import {
+  IsEmail,
   IsEnum,
   IsNotEmpty,
   Matches,
@@ -6,6 +7,7 @@ import {
   MinLength,
 } from 'class-validator';
 import { DocumentTypesEnum } from '../enums/document-types.enum';
+import { GenderEnum } from '../enums/gender.enum';
 
 export class CreateEmployeeDto {
   @IsNotEmpty()
@@ -30,4 +32,17 @@ export class CreateEmployeeDto {
   @MaxLength(4)
   @Matches(/^\+\d{2,4}$/)
   codePhone: string;
+
+  @IsNotEmpty()
+  dateOfBirth: Date;
+
+  @IsEmail()
+  email: string;
+
+  @IsNotEmpty()
+  address: string;
+
+  @IsEnum(GenderEnum)
+  @IsNotEmpty()
+  gender: GenderEnum;
 }
