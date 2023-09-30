@@ -1,5 +1,9 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
-import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
+import {
+  ListBucketsCommand,
+  PutObjectCommand,
+  S3Client,
+} from '@aws-sdk/client-s3';
 import { ConfigService } from '@nestjs/config';
 import { S3ClientConfig } from '@aws-sdk/client-s3/dist-types/S3Client';
 import { uploadDto } from '../dto/s3.dto';
@@ -14,11 +18,13 @@ export class S3Service {
     if (env === 'local') {
       config.endpoint = this.configService.getOrThrow('AWS_ENDPOINT');
     }
-    config.region = this.configService.getOrThrow('AWS_REGION');
+    config.region = this.configService.getOrThrow('AWS_REGION_CONF');
 
-    this.s3Client = new S3Client(config);
+    this.s3Client = new S3Client({
+      endpoint: config['endpoint'],
+      region: config['region'],
+    });
   }
-
   public uploadFile = async ({ bucketName, key, data }: uploadDto) => {
     try {
       const command = new PutObjectCommand({
@@ -27,9 +33,8 @@ export class S3Service {
         Body: data,
       });
 
-      await this.s3Client.send(command);
+      return await this.s3Client.send(command);
     } catch (error) {
-      console.error(`Error uploading file to bucket ${bucketName}:`, error);
       throw new InternalServerErrorException(
         `Error uploading file to bucket ${bucketName}: ${error.message}`,
       );

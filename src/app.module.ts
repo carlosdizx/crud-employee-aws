@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { UploadController } from './upload.controller';
 import * as dotenv from 'dotenv';
 import CommonModule from './common/common.module';
 dotenv.config();
@@ -11,7 +12,7 @@ dotenv.config();
     }),
     CommonModule,
   ],
-  controllers: [],
+  controllers: [UploadController],
   providers: [],
 })
 export default class AppModule {}
