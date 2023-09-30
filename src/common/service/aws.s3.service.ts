@@ -1,7 +1,8 @@
-import { Injectable } from '@nestjs/common';
-import { S3Client } from '@aws-sdk/client-s3';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { ConfigService } from '@nestjs/config';
 import { S3ClientConfig } from '@aws-sdk/client-s3/dist-types/S3Client';
+import { uploadDto } from '../dto/s3.dto';
 
 @Injectable()
 export class S3Service {
@@ -17,4 +18,21 @@ export class S3Service {
 
     this.s3Client = new S3Client(config);
   }
+
+  public uploadFile = async ({ bucketName, key, data }: uploadDto) => {
+    try {
+      const command = new PutObjectCommand({
+        Bucket: bucketName,
+        Key: key,
+        Body: data,
+      });
+
+      await this.s3Client.send(command);
+    } catch (error) {
+      console.error(`Error uploading file to bucket ${bucketName}:`, error);
+      throw new InternalServerErrorException(
+        `Error uploading file to bucket ${bucketName}: ${error.message}`,
+      );
+    }
+  };
 }
