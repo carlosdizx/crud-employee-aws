@@ -2,14 +2,13 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import RepositoryAdapterInterface from '../interfaces/repository.adapter.interface';
 import {
   DynamoDBClient,
-  PutItemCommand,
-  GetItemCommand,
-  UpdateItemCommand,
-  QueryCommand,
   DynamoDBClientConfig,
-  ScanCommandInput,
+  GetItemCommand,
+  PutItemCommand,
+  QueryCommand,
   ScanCommand,
-  QueryCommandInput,
+  ScanCommandInput,
+  UpdateItemCommand,
 } from '@aws-sdk/client-dynamodb';
 import { v4 as uuid } from 'uuid';
 import handleAwsException from '../exceptions/handle.aws.exception';
