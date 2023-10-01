@@ -10,8 +10,33 @@ export class EmployeeService {
   private readonly table: string = 'employees';
   constructor(private readonly adapter: DynamodbAdapter) {}
 
-  public createEmployee = async (dto: CreateEmployeeDto) => {
-    await this.adapter.createItem(this.table, dto);
+  public createEmployee = async ({
+    documentNumber,
+    ...dto
+  }: CreateEmployeeDto) => {
+    let employeeFound: any;
+    try {
+      employeeFound = await this.findEmployeeByKey({
+        indexName: 'documentNumber-index',
+        key: 'documentNumber',
+        value: documentNumber,
+        type: 'S',
+      });
+    } catch (error) {
+      employeeFound = null;
+    }
+    if (!employeeFound)
+      await this.adapter.createItem(this.table, {
+        ...dto,
+        documentNumber,
+      });
+    else
+      await this.adapter.updateItemById(
+        this.table,
+        employeeFound._id ? employeeFound._id : employeeFound.id,
+        dto,
+      );
+
     return { message: `Employee created` };
   };
 

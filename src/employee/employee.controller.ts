@@ -28,7 +28,6 @@ export class EmployeeController {
 
   @Get()
   async list(@Query() dto: ListDto) {
-    console.log(dto);
     dto.limit = parseInt(`${dto.limit}`, 10);
     return this.employeeService.listEmployees(dto);
   }
