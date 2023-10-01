@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateEmployeeDto } from './dto/create-employee.dto';
 import DynamodbAdapter from '../common/adapters/dynamodb.adapter';
 import ListDto from '../common/dto/list.dto';
+import { UpdateEmployeeDto } from './dto/update-employee.dto';
 
 @Injectable()
 export class EmployeeService {
@@ -25,10 +26,14 @@ export class EmployeeService {
     return { message: `Employees ${employeeList.length} registered` };
   };
 
-  public findEmployee = async (id: string) => {
+  public findEmployeeById = async (id: string) => {
     const employee = await this.adapter.getItemById(this.table, id);
     if (!employee)
       throw new NotFoundException(`Employee with id ${id} not found`);
     return employee;
+  };
+
+  public updateEmployeeById = async (id: string, dto: UpdateEmployeeDto) => {
+    return await this.adapter.updateItemById(this.table, id, dto);
   };
 }

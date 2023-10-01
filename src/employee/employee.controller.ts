@@ -5,14 +5,16 @@ import {
   Get,
   Param,
   ParseUUIDPipe,
+  Patch,
   Post,
   Query,
 } from '@nestjs/common';
 import { EmployeeService } from './employee.service';
 import { CreateEmployeeDto } from './dto/create-employee.dto';
 import ListDto from '../common/dto/list.dto';
+import { UpdateEmployeeDto } from './dto/update-employee.dto';
 
-@Controller('employee')
+@Controller('employees')
 export class EmployeeController {
   constructor(private readonly employeeService: EmployeeService) {}
 
@@ -35,8 +37,16 @@ export class EmployeeController {
     return this.employeeService.createEmployeesBulk(employeesDto);
   }
 
-  @Get('find/:id')
+  @Get('employee/:id')
   async findById(@Param('id', ParseUUIDPipe) id: string) {
-    return await this.employeeService.findEmployee(id);
+    return await this.employeeService.findEmployeeById(id);
+  }
+
+  @Patch('employee/:id')
+  async updateById(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() dto: UpdateEmployeeDto,
+  ) {
+    return await this.employeeService.updateEmployeeById(id, dto);
   }
 }
