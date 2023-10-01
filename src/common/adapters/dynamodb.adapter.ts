@@ -7,6 +7,9 @@ import {
   UpdateItemCommand,
   QueryCommand,
   DynamoDBClientConfig,
+  ScanCommandInput,
+  ScanCommand,
+  QueryCommandInput,
 } from '@aws-sdk/client-dynamodb';
 import { v4 as uuid } from 'uuid';
 import handleAwsException from '../exceptions/handle.aws.exception';
@@ -29,6 +32,45 @@ export default class DynamodbAdapter implements RepositoryAdapterInterface {
       region: config['region'],
     });
   }
+
+  public listItems = async (
+    tableName: string,
+    limit: number,
+    exclusiveStartKey?: any,
+  ): Promise<any> => {
+    const commandParams: ScanCommandInput = {
+      TableName: tableName,
+      Limit: limit,
+    };
+
+    if (exclusiveStartKey)
+      commandParams.ExclusiveStartKey = {
+        id: {
+          S: exclusiveStartKey,
+        },
+      };
+
+    try {
+      const { Items, LastEvaluatedKey } = await this.client.send(
+        new ScanCommand(commandParams),
+      );
+
+      if (Items && Items.length > 0) {
+        const items = Items.map((item) => flattenObject(item));
+        return {
+          items,
+          lastEvaluatedKey: LastEvaluatedKey,
+        };
+      }
+
+      return {
+        items: [],
+        lastEvaluatedKey: null,
+      };
+    } catch (error) {
+      handleAwsException(error);
+    }
+  };
 
   private convertValueToDynamoDBType = (
     value: any,
