@@ -47,7 +47,7 @@ export class EmployeeController {
 
   @Get('employee')
   async findByKey(@Query() query: QueryDto) {
-    return query;
+    return this.employeeService.findEmployeeByKey(query);
   }
 
   @Patch('employee/:id')

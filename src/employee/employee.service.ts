@@ -3,6 +3,7 @@ import { CreateEmployeeDto } from './dto/create-employee.dto';
 import DynamodbAdapter from '../common/adapters/dynamodb.adapter';
 import ListDto from '../common/dto/list.dto';
 import { UpdateEmployeeDto } from './dto/update-employee.dto';
+import QueryDto from '../common/dto/query.dto';
 
 @Injectable()
 export class EmployeeService {
@@ -31,6 +32,22 @@ export class EmployeeService {
     if (!employee)
       throw new NotFoundException(`Employee with id ${id} not found`);
     return employee;
+  };
+
+  public findEmployeeByKey = async ({
+    indexName,
+    key,
+    value,
+    type,
+  }: QueryDto) => {
+    const params = {
+      tableName: this.table,
+      indexName,
+      key,
+      value,
+      type,
+    };
+    return await this.adapter.getItemsByKey(params);
   };
 
   public updateEmployeeById = async (id: string, dto: UpdateEmployeeDto) => {
