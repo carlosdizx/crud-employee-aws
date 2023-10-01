@@ -9,13 +9,19 @@ export class EmployeeService {
   constructor(private readonly adapter: DynamodbAdapter) {}
 
   public createEmployee = async (dto: CreateEmployeeDto) => {
-    const result = await this.adapter.createItem(this.table, dto);
-    console.log('createEmployee');
-    return result;
+    await this.adapter.createItem(this.table, dto);
+    return { message: `Employee created` };
   };
 
-  public listEmployees = async ({ limit, page }: ListDto) => {
-    console.log({ limit, page });
-    return await this.adapter.listItems(this.table, +limit, page);
+  public listEmployees = async ({ limit, page }: ListDto) =>
+    await this.adapter.listItems(this.table, +limit, page);
+
+  public createEmployeesBulk = async (employeeList: CreateEmployeeDto[]) => {
+    const promises = employeeList.map(async (employeeDto) => {
+      return await this.createEmployee(employeeDto);
+    });
+
+    await Promise.all(promises);
+    return { message: `Employees ${employeeList.length} registered` };
   };
 }

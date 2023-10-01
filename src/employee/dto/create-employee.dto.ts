@@ -1,13 +1,18 @@
 import {
   IsEmail,
   IsEnum,
+  IsInt,
   IsNotEmpty,
   Matches,
+  Max,
   MaxLength,
+  Min,
   MinLength,
+  NotEquals,
 } from 'class-validator';
 import { DocumentTypesEnum } from '../enums/document-types.enum';
 import { GenderEnum } from '../enums/gender.enum';
+import { Type } from 'class-transformer';
 
 export class CreateEmployeeDto {
   @IsNotEmpty()
@@ -24,9 +29,8 @@ export class CreateEmployeeDto {
   documentType: DocumentTypesEnum;
 
   @IsNotEmpty()
-  @MinLength(6)
-  @MaxLength(25)
-  phone: string;
+  @Type(() => Number)
+  phone: number;
 
   @IsNotEmpty()
   @MaxLength(4)
