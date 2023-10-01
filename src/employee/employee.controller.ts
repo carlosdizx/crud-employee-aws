@@ -3,6 +3,8 @@ import {
   Body,
   Controller,
   Get,
+  HttpCode,
+  HttpStatus,
   Param,
   ParseUUIDPipe,
   Patch,
@@ -13,6 +15,7 @@ import { EmployeeService } from './employee.service';
 import { CreateEmployeeDto } from './dto/create-employee.dto';
 import ListDto from '../common/dto/list.dto';
 import { UpdateEmployeeDto } from './dto/update-employee.dto';
+import QueryDto from '../common/dto/query.dto';
 
 @Controller('employees')
 export class EmployeeController {
@@ -42,7 +45,13 @@ export class EmployeeController {
     return await this.employeeService.findEmployeeById(id);
   }
 
+  @Get('employee')
+  async findByKey(@Query() query: QueryDto) {
+    return query;
+  }
+
   @Patch('employee/:id')
+  @HttpCode(HttpStatus.NO_CONTENT)
   async updateById(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: UpdateEmployeeDto,
