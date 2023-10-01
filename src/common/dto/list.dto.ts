@@ -3,10 +3,11 @@ import { Type } from 'class-transformer';
 
 export default class ListDto {
   @IsInt()
+  @IsOptional()
   @Min(1)
   @Max(100)
   @Type(() => Number)
-  limit: number;
+  limit = 10;
 
   @IsOptional()
   page?: any;
