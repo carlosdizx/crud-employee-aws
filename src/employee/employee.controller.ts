@@ -3,6 +3,8 @@ import {
   Body,
   Controller,
   Get,
+  Param,
+  ParseUUIDPipe,
   Post,
   Query,
 } from '@nestjs/common';
@@ -15,21 +17,26 @@ export class EmployeeController {
   constructor(private readonly employeeService: EmployeeService) {}
 
   @Post()
-  create(@Body() createEmployeeDto: CreateEmployeeDto) {
+  async create(@Body() createEmployeeDto: CreateEmployeeDto) {
     return this.employeeService.createEmployee(createEmployeeDto);
   }
 
   @Get()
-  list(@Query() dto: ListDto) {
+  async list(@Query() dto: ListDto) {
     console.log(dto);
     dto.limit = parseInt(`${dto.limit}`, 10);
     return this.employeeService.listEmployees(dto);
   }
 
   @Post('bulk')
-  createBulk(@Body() employeesDto: CreateEmployeeDto[]) {
+  async createBulk(@Body() employeesDto: CreateEmployeeDto[]) {
     if (employeesDto.length > 1000)
       throw new BadRequestException('Too many employees for bulk');
     return this.employeeService.createEmployeesBulk(employeesDto);
+  }
+
+  @Get('find/:id')
+  async findById(@Param('id', ParseUUIDPipe) id: string) {
+    return await this.employeeService.findEmployee(id);
   }
 }
