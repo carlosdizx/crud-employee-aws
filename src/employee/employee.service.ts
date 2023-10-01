@@ -47,7 +47,11 @@ export class EmployeeService {
       value,
       type,
     };
-    return await this.adapter.getItemsByKey(params);
+    const result = await this.adapter.getItemsByKey(params);
+    if (!result)
+      throw new NotFoundException(`Employee with ${key} '${value}' not found`);
+    console.log(result);
+    return result;
   };
 
   public updateEmployeeById = async (id: string, dto: UpdateEmployeeDto) => {

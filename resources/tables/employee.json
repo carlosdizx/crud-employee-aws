@@ -1,9 +1,23 @@
 {
   "TableName": "employees",
-  "AttributeDefinitions": [{ "AttributeName": "id", "AttributeType": "S" }],
+  "AttributeDefinitions": [
+    { "AttributeName": "id", "AttributeType": "S" },
+    { "AttributeName": "documentNumber", "AttributeType": "S" }
+  ],
   "KeySchema": [{ "AttributeName": "id", "KeyType": "HASH" }],
   "ProvisionedThroughput": {
     "ReadCapacityUnits": 5,
     "WriteCapacityUnits": 5
-  }
+  },
+  "GlobalSecondaryIndexes": [
+    {
+      "IndexName": "documentNumber-index",
+      "KeySchema": [{ "AttributeName": "documentNumber", "KeyType": "HASH" }],
+      "Projection": { "ProjectionType": "ALL" },
+      "ProvisionedThroughput": {
+        "ReadCapacityUnits": 5,
+        "WriteCapacityUnits": 5
+      }
+    }
+  ]
 }
