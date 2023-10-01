@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { CreateEmployeeDto } from './dto/create-employee.dto';
 import DynamodbAdapter from '../common/adapters/dynamodb.adapter';
+import ListDto from '../common/dto/list.dto';
 
 @Injectable()
 export class EmployeeService {
@@ -13,11 +14,8 @@ export class EmployeeService {
     return result;
   };
 
-  public listEmployees = async () => {
-    return await this.adapter.listItems(
-      this.table,
-      2,
-      // 'a5b886af-9c69-4cfb-aa17-874c22e59893',
-    );
+  public listEmployees = async ({ limit, page }: ListDto) => {
+    console.log({ limit, page });
+    return await this.adapter.listItems(this.table, +limit, page);
   };
 }

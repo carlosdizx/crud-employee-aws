@@ -1,6 +1,14 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  Query,
+  ValidationPipe,
+} from '@nestjs/common';
 import { EmployeeService } from './employee.service';
 import { CreateEmployeeDto } from './dto/create-employee.dto';
+import ListDto from '../common/dto/list.dto';
 
 @Controller('employee')
 export class EmployeeController {
@@ -12,7 +20,9 @@ export class EmployeeController {
   }
 
   @Get()
-  list() {
-    return this.employeeService.listEmployees();
+  list(@Query() dto: ListDto) {
+    console.log(dto);
+    dto.limit = parseInt(`${dto.limit}`, 10);
+    return this.employeeService.listEmployees(dto);
   }
 }
