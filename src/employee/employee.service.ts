@@ -8,10 +8,16 @@ export class EmployeeService {
   constructor(private readonly adapter: DynamodbAdapter) {}
 
   public createEmployee = async (dto: CreateEmployeeDto) => {
-    const result = await this.adapter.createItem(this.table, {
-      documentNumber: dto.documentNumber,
-    });
+    const result = await this.adapter.createItem(this.table, dto);
     console.log('createEmployee');
     return result;
+  };
+
+  public listEmployees = async () => {
+    return await this.adapter.listItems(
+      this.table,
+      2,
+      // 'a5b886af-9c69-4cfb-aa17-874c22e59893',
+    );
   };
 }
