@@ -6,18 +6,27 @@ import {
   GetItemCommand,
   UpdateItemCommand,
   QueryCommand,
+  DynamoDBClientConfig,
 } from '@aws-sdk/client-dynamodb';
 import { v4 as uuid } from 'uuid';
 import handleAwsException from '../exceptions/handle.aws.exception';
 import flattenObject from '../utils/flatten.object';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export default class DynamodbAdapter implements RepositoryAdapterInterface {
   private readonly client: DynamoDBClient;
 
-  constructor() {
+  constructor(private readonly configService: ConfigService) {
+    const env = this.configService.getOrThrow('NODE_ENV');
+    const config: DynamoDBClientConfig = {};
+    if (env === 'local')
+      config.endpoint = this.configService.getOrThrow('AWS_ENDPOINT');
+    config.region = this.configService.getOrThrow('AWS_REGION_CONF');
+
     this.client = new DynamoDBClient({
-      region: 'us-east-1',
+      endpoint: config['endpoint'],
+      region: config['region'],
     });
   }
 
@@ -66,7 +75,6 @@ export default class DynamodbAdapter implements RepositoryAdapterInterface {
       TableName: tableName,
       Key: { id: { S: key } },
     });
-
     try {
       const response = await this.client.send(command);
       if (response.Item) return flattenObject(response.Item);
