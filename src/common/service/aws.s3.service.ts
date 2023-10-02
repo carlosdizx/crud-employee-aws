@@ -41,10 +41,16 @@ export class S3Service {
     }
   };
 
-  public listObjects = async (bucketName: string): Promise<string[]> => {
+  public listObjects = async (
+    bucketName: string,
+    path?: string,
+  ): Promise<string[]> => {
     try {
+      const prefix = path ? `${path}/` : '';
+
       const command = new ListObjectsV2Command({
         Bucket: bucketName,
+        Prefix: prefix,
       });
 
       const response = await this.s3Client.send(command);

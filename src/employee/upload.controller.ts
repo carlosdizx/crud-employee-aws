@@ -45,4 +45,11 @@ export class UploadController {
   async listObjects() {
     return this.s3Service.listObjects(this.bucketName);
   }
+
+  @Get(':id')
+  async listObjectsById(@Param('id', ParseUUIDPipe) id: string) {
+    return (await this.s3Service.listObjects(this.bucketName, id)).map(
+      (item) => item.split('/')[1],
+    );
+  }
 }
