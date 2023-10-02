@@ -73,10 +73,7 @@ export class S3Service {
         bucketName,
         path,
       );
-
-      if (objectsToDelete.length === 0) {
-        return;
-      }
+      if (objectsToDelete.length === 0) return;
 
       const deleteCommands = objectsToDelete.map((objectKey) => ({
         Bucket: bucketName,
