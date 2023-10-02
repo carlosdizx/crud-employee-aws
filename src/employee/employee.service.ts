@@ -81,4 +81,7 @@ export class EmployeeService {
   public updateEmployeeById = async (id: string, dto: UpdateEmployeeDto) => {
     return await this.adapter.updateItemById(this.table, id, dto);
   };
+
+  public deleteEmployeeById = async (id) =>
+    await this.adapter.deleteItemById(this.table, id);
 }

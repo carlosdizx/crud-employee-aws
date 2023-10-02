@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Body,
   Controller,
+  Delete,
   Get,
   HttpCode,
   HttpStatus,
@@ -56,5 +57,11 @@ export class EmployeeController {
     @Body() dto: UpdateEmployeeDto,
   ) {
     return await this.employeeService.updateEmployeeById(id, dto);
+  }
+
+  @Delete('employee/:id')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async deleteById(@Param('id', ParseUUIDPipe) id: string) {
+    return await this.employeeService.deleteEmployeeById(id);
   }
 }

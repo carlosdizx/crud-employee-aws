@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import RepositoryAdapterInterface from '../interfaces/repository.adapter.interface';
 import {
+  DeleteItemCommand,
   DynamoDBClient,
   DynamoDBClientConfig,
   GetItemCommand,
@@ -194,8 +195,21 @@ export default class DynamodbAdapter implements RepositoryAdapterInterface {
     }
   };
 
-  public deleteItemById = async (tableName: string, id: any): Promise<void> => {
-    console.log(`deleteItemById in ${tableName} for id:${id}`);
-    console.log('in next commit');
+  public deleteItemById = async (
+    tableName: string,
+    id: string,
+  ): Promise<void> => {
+    const itemResult = await this.getItemById(tableName, id);
+    if (!itemResult)
+      throw new NotFoundException(`Item with ID ${id} does not exist`);
+    const command = new DeleteItemCommand({
+      TableName: tableName,
+      Key: { id: { S: id } },
+    });
+    try {
+      await this.client.send(command);
+    } catch (error) {
+      handleAwsException(error);
+    }
   };
 }
