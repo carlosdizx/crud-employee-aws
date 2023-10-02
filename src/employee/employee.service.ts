@@ -4,11 +4,15 @@ import DynamodbAdapter from '../common/adapters/dynamodb.adapter';
 import ListDto from '../common/dto/list.dto';
 import { UpdateEmployeeDto } from './dto/update-employee.dto';
 import QueryDto from '../common/dto/query.dto';
+import { S3Service } from '../common/service/aws.s3.service';
 
 @Injectable()
 export class EmployeeService {
   private readonly table: string = 'employees';
-  constructor(private readonly adapter: DynamodbAdapter) {}
+  constructor(
+    private readonly adapter: DynamodbAdapter,
+    private readonly s3Service: S3Service,
+  ) {}
 
   public createEmployee = async ({
     documentNumber,
@@ -82,6 +86,8 @@ export class EmployeeService {
     return await this.adapter.updateItemById(this.table, id, dto);
   };
 
-  public deleteEmployeeById = async (id) =>
+  public deleteEmployeeById = async (id) => {
     await this.adapter.deleteItemById(this.table, id);
+    await this.s3Service.deleteObjectsInPath(this.table, id);
+  };
 }

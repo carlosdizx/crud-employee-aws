@@ -1,5 +1,6 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import {
+  DeleteObjectCommand,
   ListObjectsV2Command,
   PutObjectCommand,
   S3Client,
@@ -59,6 +60,35 @@ export class S3Service {
     } catch (error) {
       throw new InternalServerErrorException(
         `Error listing objects in bucket ${bucketName}: ${error.message}`,
+      );
+    }
+  };
+
+  public deleteObjectsInPath = async (
+    bucketName: string,
+    path: string,
+  ): Promise<void> => {
+    try {
+      const objectsToDelete: string[] = await this.listObjects(
+        bucketName,
+        path,
+      );
+
+      if (objectsToDelete.length === 0) {
+        return;
+      }
+
+      const deleteCommands = objectsToDelete.map((objectKey) => ({
+        Bucket: bucketName,
+        Key: objectKey,
+      }));
+
+      for (const deleteCommand of deleteCommands) {
+        await this.s3Client.send(new DeleteObjectCommand(deleteCommand));
+      }
+    } catch (error) {
+      throw new InternalServerErrorException(
+        `Error deleting objects in path '${path}' in bucket ${bucketName}: ${error.message}`,
       );
     }
   };
